@@ -1,0 +1,29 @@
+# Phân tích Trade-off: Dot Notation vs Bracket Notation trong Truy xuất Đối tượng
+
+## 1. Mục tiêu
+- Phân tích và so sánh toàn diện giữa Dot Notation (`obj.prop`) và Bracket Notation (`obj['prop']`).
+- Lập bảng đối chiếu kỹ thuật (Trade-off Table) về khả năng truy cập qua biến động, thuộc tính chứa ký tự đặc biệt/dấu cách/dấu gạch ngang.
+- Xác định quy tắc Clean Code khi nào nên dùng cú pháp nào trong dự án thực tế.
+
+---
+
+## 2. Bảng so sánh Kỹ thuật (Trade-off Table)
+
+| Tiêu chuẩn | Dot Notation (`obj.prop`) | Bracket Notation (`obj['prop']`) |
+| :--- | :--- | :--- |
+| **Tính thuận tiện & Thẩm mỹ** | Ngắn gọn, trực quan, hỗ trợ IDE Autocomplete (nhắc code) rất tốt. | Dài hơn, yêu cầu gõ thêm dấu ngoặc vuông và dấu nháy. |
+| **Truy cập qua biến động (Dynamic variable)** | **Không hỗ trợ.** Trình biên dịch chỉ tìm chuỗi tên cố định chính xác như được viết. | **Rất mạnh.** Đánh giá và nội suy mọi biểu thức hoặc giá trị của biến. |
+| **Tên key có ký tự đặc biệt / Bắt đầu bằng số** | **Lỗi cú pháp.** (VD: `obj.check-in`, `obj.123` sẽ báo lỗi ngay lập tức). | **Hỗ trợ trọn vẹn.** (VD: `obj['check-in']`, `obj['123']` hoạt động bình thường). |
+| **Khuyến nghị sử dụng** | Dùng làm **mặc định** cho các thuộc tính tĩnh, đã biết trước. | **Bắt buộc** dùng cho biến động và dynamic key. |
+
+---
+
+## 3. Quy tắc Clean Code (Khuyến nghị cho Đội ngũ Phát triển)
+
+Để tránh các lỗi ngầm (`undefined`) trong hệ thống như dự án PMS khách sạn, đội ngũ cần tuân thủ các quy tắc sau:
+
+1. **Ưu tiên Dot Notation:** Dùng làm tiêu chuẩn mặc định để code dễ đọc, dễ bảo trì và tận dụng tối đa tính năng nhắc code của trình soạn thảo (VS Code, WebStorm...).
+2. **Bắt buộc dùng Bracket Notation trong 3 trường hợp:**
+   - Khi tên thuộc tính (key) được truyền qua một **biến động** (Ví dụ: `const searchField = 'guestName'; obj[searchField];`).
+   - Khi tên thuộc tính vi phạm quy tắc định danh chuẩn của JavaScript (chứa khoảng trắng, dấu gạch ngang `-`, hoặc bắt đầu bằng chữ số).
+   - Khi cần duyệt qua các thuộc tính của đối tượng bằng vòng lặp (Ví dụ: `for (const key in obj) { console.log(obj[key]); }`).
